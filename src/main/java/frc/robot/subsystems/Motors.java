@@ -16,10 +16,10 @@ public class Motors extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
 
-  private VictorSPX motorL1 = new VictorSPX(1);
-	private VictorSPX motorL2 = new VictorSPX(2);
-	private VictorSPX motorR1 = new VictorSPX(3);
-	private VictorSPX motorR2 = new VictorSPX(4);
+  private VictorSPX motorL1 = new VictorSPX(2);
+	private VictorSPX motorL2 = new VictorSPX(5);
+	private VictorSPX motorR1 = new VictorSPX(1);
+	private VictorSPX motorR2 = new VictorSPX(3);
   
 
   private double gain = 1;
