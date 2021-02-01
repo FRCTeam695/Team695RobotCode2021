@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
@@ -39,7 +40,7 @@ public class FalconClosedLoop extends SubsystemBase {
     private static PIDCoefficients VelocityPIDCoefficients = new PIDCoefficients(.23,0.0004,7,0);
     private static PIDCoefficients PositionPIDCoefficients = new PIDCoefficients(1,0,0,0);
     public double distancePerPulse = 2048;
-    public FalconClosedLoop(TalonFX TalonUsed,int PIDLoopId,ControlMode ClosedLoopMode) {
+    public FalconClosedLoop(TalonFX TalonUsed,int PIDLoopId,ControlMode ClosedLoopMode,SupplyCurrentLimitConfiguration LimitConfiguration) {
         this.PIDLoopId = PIDLoopId;
         this.Talon = TalonUsed;
         Talon.configFactoryDefault();
@@ -51,8 +52,13 @@ public class FalconClosedLoop extends SubsystemBase {
 		Talon.configNominalOutputReverse(0, DriveConstants.MOTOR_TIMEOUT);
 		Talon.configPeakOutputForward(1, DriveConstants.MOTOR_TIMEOUT);
         Talon.configPeakOutputReverse(-1, DriveConstants.MOTOR_TIMEOUT);
+        Talon.configSupplyCurrentLimit(LimitConfiguration);
         Talon.getSensorCollection().setIntegratedSensorPositionToAbsolute(DriveConstants.MOTOR_TIMEOUT);
         applyPIDCoefficients(getPIDCoefficientsForControlMode(ClosedLoopMode));
+    }
+
+    public FalconClosedLoop(TalonFX TalonUsed,int PIDLoopId,ControlMode ClosedLoopMode) {
+        this(TalonUsed,PIDLoopId,ClosedLoopMode, Constants.MotorCurrentLimits.FALCON_SUPPLY_LIMIT_DEFAULT);
     }
     public PIDCoefficients getPIDCoefficientsForControlMode(ControlMode ControlModeToUse) {
         switch (ControlModeToUse) {

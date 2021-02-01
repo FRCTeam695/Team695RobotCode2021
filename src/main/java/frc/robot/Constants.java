@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.revrobotics.ColorMatch;
 
 import edu.wpi.first.wpilibj.DigitalSource;
@@ -73,6 +74,10 @@ public final class Constants {
   public static final class LimelightMounting {
     public static final double LIMELIGHT_MOUNT_HEIGHT = 23.0; //inches
     public static final double LIMELIGHT_MOUNT_ANGLE = 15.0; //degrees
+  }
+
+  public static final class MotorCurrentLimits {
+    public static final SupplyCurrentLimitConfiguration FALCON_SUPPLY_LIMIT_DEFAULT = new SupplyCurrentLimitConfiguration(true,10,10,0);
   }
 
   public static final class AuxiliaryMotorIds {
