@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -44,7 +45,10 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Driving.*;
 import frc.robot.commands.Driving.ConventionalDrive.AutonomousMove;
 import frc.robot.commands.Driving.ConventionalDrive.ConventionalArcadeDrive;
+import frc.robot.commands.HopperDriver.AllocateSpaceInHopperForNextCell;
 import frc.robot.commands.HopperDriver.HopperAutonomous;
+import frc.robot.commands.HopperDriver.RunHopperUntilBallIsIn;
+import frc.robot.commands.HopperDriver.TakeInFourthPowerCell;
 import frc.robot.commands.HopperDriver.VictorControlJoystickAxis;
 import frc.robot.commands.Trajectory.*;
 import frc.robot.commands.Turret.*;
@@ -109,7 +113,11 @@ public class RobotContainer {
   //private final SequentialCommandGroup sequentialTrajectory = new SequentialCommandGroup(traWjectory1.Runner());
   private final ParallelCommandGroup DaytonParallel = new ParallelCommandGroup(TurretFocusPIDAuton_Inst);
   //private final SequentialCommandGroup DaytonAutonomous = new SequentialCommandGroup(DaytonParallel);
-
+  private final RunHopperUntilBallIsIn RunHopperUntilBallIsIn_Inst = new RunHopperUntilBallIsIn(Hopper_Inst);
+  private final AllocateSpaceInHopperForNextCell  AllocateSpaceInHopperForNextCell_Inst = new AllocateSpaceInHopperForNextCell(Hopper_Inst);
+  private final SequentialCommandGroup FullyIntakeBall = new SequentialCommandGroup(RunHopperUntilBallIsIn_Inst, AllocateSpaceInHopperForNextCell_Inst);
+  private final TakeInFourthPowerCell TakeInFourthPowerCell_Inst = new TakeInFourthPowerCell(Hopper_Inst);
+  private final ConditionalCommand HopperDependentIntake = new ConditionalCommand(TakeInFourthPowerCell_Inst, FullyIntakeBall, () -> {return Hopper_Inst.almostAtCapacity();});
   //teleop
 
   //ugly rake solution:  
