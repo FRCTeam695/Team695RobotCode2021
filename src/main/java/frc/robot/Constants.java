@@ -78,6 +78,8 @@ public final class Constants {
 
   public static final class HopperSettings{
     public static final double HOPPER_SPEED = 0.25;
+    public static final int HOPPER_INPUT_SENSOR_ID=0;
+    public static final int HOPPER_TACH_ID=1;    
   }
 
   public static final class MotorCurrentLimits {

@@ -11,18 +11,21 @@ import frc.robot.Constants;
 
 
 public class Hopper extends SubsystemBase {
-  private Counter hoppertach = new Counter(1);
+  private Counter HopperTach = new Counter(1);
   //has BACKWARDS direction
-  private AdjustableVictor hopper = new AdjustableVictor(6);
-  private DigitalInput hopperentry = new DigitalInput(0);
+  private AdjustableVictor HopperVictor = new AdjustableVictor(6);
+  private DigitalInput HopperEntrySensor = new DigitalInput(0);
   private int hopperCount = 0;
   
   /** Creates a new Hopper. */
-  public Hopper(Counter hoppertach,AdjustableVictor hopper, DigitalInput hopperentry) {
+  public Hopper(Counter hoppertach,AdjustableVictor HopperVictor, DigitalInput HopperEntrySensor) {
+    this.HopperTach = hoppertach;
+    this.HopperVictor = HopperVictor;
+    this.HopperEntrySensor = HopperEntrySensor;
   }
 
   public int getHopperTachValue() {
-    return this.hoppertach.get();
+    return this.HopperTach.get();
   }
 
   public void incrementHopperCount(){
@@ -34,15 +37,15 @@ public class Hopper extends SubsystemBase {
   }
 
   public void runHopper(){
-    hopper.setPower(Constants.HopperSettings.HOPPER_SPEED);
+    HopperVictor.setPower(Constants.HopperSettings.HOPPER_SPEED);
   }
 
   public void stopHopper(){
-    hopper.setPower(0);
+    HopperVictor.setPower(0);
   }
 
   public boolean powerCellInSensor(){
-    return !hopperentry.get();
+    return !HopperEntrySensor.get();
   }
 
   public boolean isFull(){
@@ -54,7 +57,7 @@ public class Hopper extends SubsystemBase {
   }
 
   public void resetHopperTach(){
-    this.hoppertach.reset();
+    this.HopperTach.reset();
   }
 
 

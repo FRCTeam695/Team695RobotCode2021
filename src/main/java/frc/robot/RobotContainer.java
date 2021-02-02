@@ -16,6 +16,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -47,8 +49,9 @@ import frc.robot.commands.HopperDriver.VictorControlJoystickAxis;
 import frc.robot.commands.Trajectory.*;
 import frc.robot.commands.Turret.*;
 import frc.robot.driverinput.LogitechF310;
+import frc.robot.enums.RotationDirection;
 import frc.robot.Utility.Tuple;
-//import frc.robot.commands.*; commands doesn't exist apparently was causing a compile failur
+import frc.robot.commands.*; //commands doesn't exist apparently was causing a compile failur
 import frc.robot.subsystems.*;
 import frc.robot.subsystems.dashTab.box;
 import edu.wpi.first.wpilibj.Joystick;
@@ -72,8 +75,9 @@ public class RobotContainer {
   // Create a voltage constraint to ensure we don't accelerate too fast
   //private final SimpleMotorFeedforward forwardMotor = new SimpleMotorFeedforward(AutoConstants.ksVolts, AutoConstants.kvVoltSecondsPerMeter, AutoConstants.kaVoltSecondsSquaredPerMeter);
   //private final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(forwardMotor, AutoConstants.kDriveKinematics, 10);
-  private final AdjustableVictor BallHopperVictor = new AdjustableVictor(AuxiliaryMotorIds.HOPPER_VICTOR_ID);
+  //private final AdjustableVictor BallHopperVictor = new AdjustableVictor(AuxiliaryMotorIds.HOPPER_VICTOR_ID);
   private final IntakeRake IntakeRake_Inst = new IntakeRake();
+  private final Hopper Hopper_Inst = new Hopper(new Counter(Constants.HopperSettings.HOPPER_TACH_ID), new AdjustableVictor(Constants.AuxiliaryMotorIds.HOPPER_VICTOR_ID,RotationDirection.COUNTER_CLOCKWISE), new DigitalInput(Constants.HopperSettings.HOPPER_INPUT_SENSOR_ID));
   private final Dashboard Dashboard_Inst = new Dashboard();
   
   // Create config for trajectory
@@ -98,7 +102,7 @@ public class RobotContainer {
   //private final DriveModeController DriveModeController_Inst = new DriveModeController(Drivetrain_inst, ControllerDrive);
   private final AutoTurretRotation AutoTurretRotation_inst = new AutoTurretRotation(Turret_Inst);
   private final TurretFocusPID TurretFocusPID_inst = new TurretFocusPID(Turret_Inst,new PIDController(0.1, 0.00025, 0));
-  private final TurretFocusPIDAuton TurretFocusPIDAuton_Inst = new TurretFocusPIDAuton(Turret_Inst,BallHopperVictor,new PIDController(0.1, 0.001, 0));
+  //private final TurretFocusPIDAuton TurretFocusPIDAuton_Inst = new TurretFocusPIDAuton(Turret_Inst,BallHopperVictor,new PIDController(0.1, 0.001, 0));
   private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(AutoTurretRotation_inst);
   private final ConventionalArcadeDrive ConventionalArcadeDrive_Inst = new ConventionalArcadeDrive(ConventionalDriveTrain_Inst, ControllerDrive);
   //auton
