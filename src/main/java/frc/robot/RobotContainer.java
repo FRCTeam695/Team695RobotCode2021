@@ -123,6 +123,8 @@ public class RobotContainer {
   private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
   private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
   private final IntakeRakeAxisDependentSpeed intakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.RightTrigger);
+  private final IntakeRakeAxisDependentSpeed intakeRakeAxisDependentSpeedReverse_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger,RotationDirection.COUNTER_CLOCKWISE);
+
   //teleop
 
   //ugly rake solution:  
@@ -154,6 +156,9 @@ public class RobotContainer {
     ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),intakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
+
+    ControllerDrive.LeftTriggerAsButton.whenPressed(intakeRakeAxisDependentSpeedReverse_Inst);
+      
 
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));
