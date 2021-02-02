@@ -153,12 +153,13 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //XButton.whenPressed(() -> DriveModeController_Inst.toggleDrive());
+    //perhaps bind lowering/rasing of rake to a bumper and have rake speed controlled by triggers
     ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),intakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
 
     ControllerDrive.LeftTriggerAsButton.whenPressed(intakeRakeAxisDependentSpeedReverse_Inst);
-      
+
 
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));
