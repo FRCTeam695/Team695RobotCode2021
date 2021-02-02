@@ -46,6 +46,7 @@ import frc.robot.commands.Driving.*;
 import frc.robot.commands.Driving.ConventionalDrive.AutonomousMove;
 import frc.robot.commands.Driving.ConventionalDrive.ConventionalArcadeDrive;
 import frc.robot.commands.HopperDriver.AllocateSpaceInHopperForNextCell;
+import frc.robot.commands.HopperDriver.HaltUntilBallDetected;
 import frc.robot.commands.HopperDriver.HopperAutonomous;
 import frc.robot.commands.HopperDriver.RunHopperUntilBallIsIn;
 import frc.robot.commands.HopperDriver.TakeInFourthPowerCell;
@@ -118,6 +119,8 @@ public class RobotContainer {
   private final SequentialCommandGroup FullyIntakeBall = new SequentialCommandGroup(RunHopperUntilBallIsIn_Inst, AllocateSpaceInHopperForNextCell_Inst);
   private final TakeInFourthPowerCell TakeInFourthPowerCell_Inst = new TakeInFourthPowerCell(Hopper_Inst);
   private final ConditionalCommand HopperDependentIntake = new ConditionalCommand(TakeInFourthPowerCell_Inst, FullyIntakeBall, () -> {return Hopper_Inst.almostAtCapacity();});
+  private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
+  private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
   //teleop
 
   //ugly rake solution:  
@@ -146,8 +149,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //XButton.whenPressed(() -> DriveModeController_Inst.toggleDrive());
-    ControllerDrive.RightTriggerAsButton.whenPressed(new InstantCommand(IntakeRake_Inst::enableRake,IntakeRake_Inst));
-    ControllerDrive.RightTriggerAsButton.whenReleased(new InstantCommand(IntakeRake_Inst::disableRake,IntakeRake_Inst));
+    ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst)));
+    ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
+    ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
 
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));

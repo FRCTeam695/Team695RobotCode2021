@@ -7,39 +7,34 @@ package frc.robot.commands.HopperDriver;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Hopper;
 
-public class RunHopperUntilBallIsIn extends CommandBase {
+public class HaltUntilBallDetected extends CommandBase {
+  /** Creates a new HaltUntilBallDetected. */
   Hopper Hopper_Inst;
-  /** Creates a new IntakeBall. */
-  public RunHopperUntilBallIsIn(Hopper Hopper_Inst) {
+  public HaltUntilBallDetected(Hopper Hopper_Inst) {
     this.Hopper_Inst = Hopper_Inst;
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Hopper_Inst);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    Hopper_Inst.resetHopperTach();
-  }
-
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Hopper_Inst.runHopper();
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Hopper_Inst.stopHopper();
-    if (!interrupted && !Hopper_Inst.isFull()) 
-      Hopper_Inst.incrementHopperCount();
+    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Hopper_Inst.isFull() || !Hopper_Inst.powerCellInSensor();
+    return Hopper_Inst.powerCellInSensor();
   }
 }

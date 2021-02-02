@@ -16,6 +16,6 @@ public class TakeInFourthPowerCell extends AllocateSpaceInHopperForNextCell {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Hopper_Inst.getHopperTachValue() >= 2250;
+    return Hopper_Inst.isFull() || Hopper_Inst.getHopperTachValue() >= 2250;
   }
 }
