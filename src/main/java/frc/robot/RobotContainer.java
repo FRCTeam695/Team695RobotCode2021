@@ -51,6 +51,7 @@ import frc.robot.commands.HopperDriver.HopperAutonomous;
 import frc.robot.commands.HopperDriver.RunHopperUntilBallIsIn;
 import frc.robot.commands.HopperDriver.TakeInFourthPowerCell;
 import frc.robot.commands.HopperDriver.VictorControlJoystickAxis;
+import frc.robot.commands.IntakeRake.IntakeRakeAxisDependentSpeed;
 import frc.robot.commands.Trajectory.*;
 import frc.robot.commands.Turret.*;
 import frc.robot.driverinput.LogitechF310;
@@ -121,6 +122,7 @@ public class RobotContainer {
   private final ConditionalCommand HopperDependentIntake = new ConditionalCommand(TakeInFourthPowerCell_Inst, FullyIntakeBall, () -> {return Hopper_Inst.almostAtCapacity();});
   private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
   private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
+  private final IntakeRakeAxisDependentSpeed intakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.RightTrigger);
   //teleop
 
   //ugly rake solution:  
@@ -149,7 +151,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     //XButton.whenPressed(() -> DriveModeController_Inst.toggleDrive());
-    ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst)));
+    ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),intakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
 

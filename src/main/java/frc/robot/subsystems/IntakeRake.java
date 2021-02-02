@@ -17,7 +17,7 @@ public class IntakeRake extends SubsystemBase {
   private Solenoid RakePneumaticCylinderLeft = new Solenoid(0); 
   private Solenoid RakePneumaticCylinderRight = new Solenoid(1);
   private AdjustableVictor IntakeDriverMotor = new AdjustableVictor(AuxiliaryMotorIds.INTAKE_VICTOR_ID,RotationDirection.CLOCKWISE);
-  private boolean currentlyEnabled = false;
+  private boolean currentlyLowered = false;
   /**
    * Creates a new IntakeRake.
    */
@@ -31,38 +31,42 @@ public class IntakeRake extends SubsystemBase {
   public void setDirectionCounterClockwise() {
     IntakeDriverMotor.setDirection(RotationDirection.COUNTER_CLOCKWISE);
   }
-  
+
   private void enableMotor() {
     //direction is dynamically controlled behind the scenes.
     IntakeDriverMotor.setPower(1);
+  }
+
+  public void setMotorPower(double PercentOutput) {
+    IntakeDriverMotor.setPower(PercentOutput);
   }
 
   private void disableMotor() {
     IntakeDriverMotor.setPower(0);
   }
 
-  private void raiseRake() {
+  public void raiseRake() {
+    if (currentlyLowered) 
+      throw new IllegalStateException("Attempted to enable already enabled rake.");
     RakePneumaticCylinderLeft.set(true);
     RakePneumaticCylinderRight.set(true);
   }
 
-  private void lowerRake() {
+  public void lowerRake() {
+    if (!currentlyLowered) 
+      throw new IllegalStateException("Attempted to diable already diabled rake.");
     RakePneumaticCylinderLeft.set(false);
     RakePneumaticCylinderRight.set(false);
   }
 
   public void enableRake() {
-    if (currentlyEnabled) 
-      throw new IllegalStateException("Attempted to enable already enabled rake.");
-    currentlyEnabled = true;
+    currentlyLowered = true;
     lowerRake();
     enableMotor();
   }
 
   public void disableRake() {
-    if (!currentlyEnabled) 
-      throw new IllegalStateException("Attempted to diable already diabled rake.");
-    currentlyEnabled = false;
+    currentlyLowered = false;
     disableMotor();
     raiseRake();
   }
