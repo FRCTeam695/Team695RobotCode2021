@@ -76,6 +76,10 @@ public final class Constants {
     public static final double LIMELIGHT_MOUNT_ANGLE = 15.0; //degrees
   }
 
+  public static final class HopperSettings{
+    public static final double HOPPER_SPEED = 0.25;
+  }
+
   public static final class MotorCurrentLimits {
     public static final SupplyCurrentLimitConfiguration FALCON_SUPPLY_LIMIT_DEFAULT = new SupplyCurrentLimitConfiguration(true,10,10,0);
   }

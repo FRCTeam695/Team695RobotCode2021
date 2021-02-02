@@ -12,10 +12,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.AuxiliaryMotorIds;
 import frc.robot.enums.RotationDirection;
 
+
 public class IntakeRake extends SubsystemBase {
   private Solenoid RakePneumaticCylinderLeft = new Solenoid(0); 
   private Solenoid RakePneumaticCylinderRight = new Solenoid(1);
   private AdjustableVictor IntakeDriverMotor = new AdjustableVictor(AuxiliaryMotorIds.INTAKE_VICTOR_ID,RotationDirection.CLOCKWISE);
+  private boolean currentlyEnabled = false;
   /**
    * Creates a new IntakeRake.
    */
@@ -29,33 +31,38 @@ public class IntakeRake extends SubsystemBase {
   public void setDirectionCounterClockwise() {
     IntakeDriverMotor.setDirection(RotationDirection.COUNTER_CLOCKWISE);
   }
-  public void enableMotor() {
+  
+  private void enableMotor() {
     //direction is dynamically controlled behind the scenes.
     IntakeDriverMotor.setPower(1);
   }
-  public void disableMotor() {
-    
+
+  private void disableMotor() {
     IntakeDriverMotor.setPower(0);
   }
 
-  public void raiseRake() {
+  private void raiseRake() {
     RakePneumaticCylinderLeft.set(true);
     RakePneumaticCylinderRight.set(true);
-
   }
 
-  public void lowerRake() {
+  private void lowerRake() {
     RakePneumaticCylinderLeft.set(false);
     RakePneumaticCylinderRight.set(false);
-
   }
 
   public void enableRake() {
+    if (currentlyEnabled) 
+      throw new IllegalStateException("Attempted to enable already enabled rake.");
+    currentlyEnabled = true;
     lowerRake();
     enableMotor();
   }
 
   public void disableRake() {
+    if (!currentlyEnabled) 
+      throw new IllegalStateException("Attempted to diable already diabled rake.");
+    currentlyEnabled = false;
     disableMotor();
     raiseRake();
   }
