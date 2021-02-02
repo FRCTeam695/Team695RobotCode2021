@@ -122,8 +122,7 @@ public class RobotContainer {
   private final ConditionalCommand HopperDependentIntake = new ConditionalCommand(TakeInFourthPowerCell_Inst, FullyIntakeBall, () -> {return Hopper_Inst.almostAtCapacity();});
   private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
   private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
-  private final IntakeRakeAxisDependentSpeed intakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.RightTrigger);
-  private final IntakeRakeAxisDependentSpeed intakeRakeAxisDependentSpeedReverse_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger,RotationDirection.COUNTER_CLOCKWISE);
+  private final IntakeRakeAxisDependentSpeed IntakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger, ControllerDrive.RightTrigger);
 
   //teleop
 
@@ -154,13 +153,11 @@ public class RobotContainer {
 
     //XButton.whenPressed(() -> DriveModeController_Inst.toggleDrive());
     //perhaps bind lowering/rasing of rake to a bumper and have rake speed controlled by triggers
-    ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),intakeRakeAxisDependentSpeed_Inst));
+    ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
 
-    ControllerDrive.LeftTriggerAsButton.whenPressed(intakeRakeAxisDependentSpeedReverse_Inst);
-
-
+    ControllerDrive.LeftTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));
 

@@ -13,20 +13,17 @@ import frc.robot.subsystems.IntakeRake;
 public class IntakeRakeAxisDependentSpeed extends CommandBase {
   /** Creates a new IntakeRakeAxisDependentSpeed. */
   IntakeRake IntakeRake_Inst;
-  DoubleSupplier DriverLeftTrigger;
+  DoubleSupplier DriverLeftTrigger, DriverRightTrigger;
   RotationDirection RotationDirectionUsed;
 
-  public IntakeRakeAxisDependentSpeed(IntakeRake IntakeRake_Inst,DoubleSupplier DriverLeftTrigger,RotationDirection RotationDirectionUsed) {
+  public IntakeRakeAxisDependentSpeed(IntakeRake IntakeRake_Inst,DoubleSupplier DriverLeftTrigger,DoubleSupplier DriverRightTrigger) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.IntakeRake_Inst = IntakeRake_Inst;
     this.DriverLeftTrigger = DriverLeftTrigger;
-    this.RotationDirectionUsed = RotationDirectionUsed;
+    this.DriverRightTrigger = DriverRightTrigger;
     addRequirements(IntakeRake_Inst);
   }
 
-  public IntakeRakeAxisDependentSpeed(IntakeRake IntakeRake_Inst,DoubleSupplier DriverLeftTrigger) {
-    this(IntakeRake_Inst, DriverLeftTrigger, RotationDirection.CLOCKWISE);
-  }
 
 
   // Called when the command is initially scheduled.
@@ -36,7 +33,11 @@ public class IntakeRakeAxisDependentSpeed extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    IntakeRake_Inst.setMotorPower(RotationDirectionUsed.SIGN_MODIFIER*DriverLeftTrigger.getAsDouble());
+    if (DriverLeftTrigger.getAsDouble() > 0.1) {
+      IntakeRake_Inst.setMotorPower(-1*DriverLeftTrigger.getAsDouble());
+    } else{
+      IntakeRake_Inst.setMotorPower(DriverRightTrigger.getAsDouble());
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -46,6 +47,6 @@ public class IntakeRakeAxisDependentSpeed extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return DriverLeftTrigger.getAsDouble() <= 0.1;
+    return DriverLeftTrigger.getAsDouble() <= 0.1 && DriverRightTrigger.getAsDouble() <= 0.1;
   }
 }
