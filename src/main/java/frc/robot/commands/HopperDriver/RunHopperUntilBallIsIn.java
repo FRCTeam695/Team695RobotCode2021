@@ -38,6 +38,6 @@ public class RunHopperUntilBallIsIn extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Hopper_Inst.getHopperTachValue() >= 1000;
+    return !Hopper_Inst.powerCellInSensor();
   }
 }
