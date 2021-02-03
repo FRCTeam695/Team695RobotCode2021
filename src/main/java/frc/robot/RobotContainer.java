@@ -123,7 +123,7 @@ public class RobotContainer {
   private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
   private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
   private final IntakeRakeAxisDependentSpeed IntakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger, ControllerDrive.RightTrigger);
-
+  
   //teleop
 
   //ugly rake solution:  
@@ -156,7 +156,8 @@ public class RobotContainer {
     ControllerDrive.RightTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
-
+    //TODO: make it so that pressing twice doesn't run command twice and ruin everything :(
+    ControllerDrive.BButton.whenPressed(new SequentialCommandGroup(new InstantCommand(Turret_Inst::spinUpMotorsToHighShootSpeeds,Turret_Inst)));
     ControllerDrive.LeftTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));

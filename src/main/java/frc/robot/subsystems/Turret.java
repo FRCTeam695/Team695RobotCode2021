@@ -99,6 +99,15 @@ public class Turret extends SubsystemBase {
     BottomShooterMotor.setVelocityPercent(bottomPercent);
 
   }
+
+  public void spinUpMotorsToHighShootSpeeds(){
+    setShooterWheelPowers(0.9, 0.4);
+  }
+
+  public void stopMotors(){
+    setShooterWheelPowers(0, 0);
+  }
+
   public int getTopError() {
     return TopShooterMotor.getClosedLoopError();
   }
