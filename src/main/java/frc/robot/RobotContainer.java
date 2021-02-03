@@ -7,64 +7,41 @@
 
 package frc.robot;
 
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonFX;
-
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.Driving.*;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AuxiliaryMotorIds;
 import frc.robot.commands.Driving.ConventionalDrive.AutonomousMove;
 import frc.robot.commands.Driving.ConventionalDrive.ConventionalArcadeDrive;
 import frc.robot.commands.Driving.ConventionalDrive.MoveAtSpeedForSensorPosition;
 import frc.robot.commands.HopperDriver.AllocateSpaceInHopperForNextCell;
 import frc.robot.commands.HopperDriver.HaltUntilBallDetected;
-import frc.robot.commands.HopperDriver.HopperAutonomous;
 import frc.robot.commands.HopperDriver.RunHopperUntilBallIsIn;
 import frc.robot.commands.HopperDriver.TakeInFourthPowerCell;
 import frc.robot.commands.HopperDriver.UnloadFullHopperIntoShooter;
 import frc.robot.commands.HopperDriver.VictorControlJoystickAxis;
 import frc.robot.commands.IntakeRake.IntakeRakeAxisDependentSpeed;
-import frc.robot.commands.Trajectory.*;
-import frc.robot.commands.Turret.*;
+import frc.robot.commands.Turret.AutoTurretRotation;
+import frc.robot.commands.Turret.SpinUpMotorsToLowShoot;
+import frc.robot.commands.Turret.TurretFocusPID;
+import frc.robot.commands.Turret.TurretFocusPIDAuton;
 import frc.robot.driverinput.LogitechF310;
 import frc.robot.enums.RotationDirection;
-import frc.robot.Utility.Tuple;
-import frc.robot.commands.*; //commands doesn't exist apparently was causing a compile failur
-import frc.robot.subsystems.*;
-import frc.robot.subsystems.dashTab.box;
-import edu.wpi.first.wpilibj.Joystick;
-import  edu.wpi.first.wpilibj.controller.PIDController;
-import frc.robot.Constants.AuxiliaryMotorIds;
+import frc.robot.subsystems.AdjustableVictor;
+import frc.robot.subsystems.CompressorController;
+import frc.robot.subsystems.ConventionalDriveTrain;
+import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.IntakeRake;
+import frc.robot.subsystems.Turret;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -83,7 +60,7 @@ public class RobotContainer {
   // Create a voltage constraint to ensure we don't accelerate too fast
   //private final SimpleMotorFeedforward forwardMotor = new SimpleMotorFeedforward(AutoConstants.ksVolts, AutoConstants.kvVoltSecondsPerMeter, AutoConstants.kaVoltSecondsSquaredPerMeter);
   //private final DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(forwardMotor, AutoConstants.kDriveKinematics, 10);
-  //private final AdjustableVictor BallHopperVictor = new AdjustableVictor(AuxiliaryMotorIds.HOPPER_VICTOR_ID);
+  private final AdjustableVictor BallHopperVictor = new AdjustableVictor(AuxiliaryMotorIds.HOPPER_VICTOR_ID);
   private final IntakeRake IntakeRake_Inst = new IntakeRake();
   private final Hopper Hopper_Inst = new Hopper(new Counter(Constants.HopperSettings.HOPPER_TACH_ID), new AdjustableVictor(Constants.AuxiliaryMotorIds.HOPPER_VICTOR_ID,RotationDirection.COUNTER_CLOCKWISE), new DigitalInput(Constants.HopperSettings.HOPPER_INPUT_SENSOR_ID));
   private final Dashboard Dashboard_Inst = new Dashboard();
@@ -110,7 +87,7 @@ public class RobotContainer {
   //private final DriveModeController DriveModeController_Inst = new DriveModeController(Drivetrain_inst, ControllerDrive);
   private final AutoTurretRotation AutoTurretRotation_inst = new AutoTurretRotation(Turret_Inst);
   private final TurretFocusPID TurretFocusPID_inst = new TurretFocusPID(Turret_Inst,new PIDController(0.1, 0.00025, 0));
-  //private final TurretFocusPIDAuton TurretFocusPIDAuton_Inst = new TurretFocusPIDAuton(Turret_Inst,BallHopperVictor,new PIDController(0.1, 0.001, 0));
+  private final TurretFocusPIDAuton TurretFocusPIDAuton_Inst = new TurretFocusPIDAuton(Turret_Inst,BallHopperVictor,new PIDController(0.1, 0.001, 0));
   private final SequentialCommandGroup TurretGroup = new SequentialCommandGroup(AutoTurretRotation_inst);
   private final ConventionalArcadeDrive ConventionalArcadeDrive_Inst = new ConventionalArcadeDrive(ConventionalDriveTrain_Inst, ControllerDrive);
   //auton
@@ -128,7 +105,7 @@ public class RobotContainer {
   private final MoveAtSpeedForSensorPosition BackUpRobotFromPowerPort = new MoveAtSpeedForSensorPosition(ConventionalDriveTrain_Inst, -0.5, 50000);
   private final UnloadFullHopperIntoShooter unloadFullHopperIntoShooter_Inst = new UnloadFullHopperIntoShooter(Hopper_Inst);
   private final SpinUpMotorsToLowShoot spinUpMotorsToLowShoot_Inst = new SpinUpMotorsToLowShoot(Turret_Inst);
-  //teleop
+  //teleop     
 
   //ugly rake solution:  
   //private final RakeAdjusterUgly UglyRakeAdjuster = new RakeAdjusterUgly()
