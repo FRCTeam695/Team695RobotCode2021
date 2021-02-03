@@ -54,7 +54,7 @@ public class Drivetrain extends SubsystemBase {
     resetEncoders();
     m_odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()));
     m_drive = new DifferentialDrive(leftPrimary, rightPrimary);
-    m_drive.setRightSideInverted(false);
+    m_drive.setRightSideInverted(false); //no because motor is already inverted so drivetrain class shouldn't bother
 
   }
   // The robot's drive
@@ -150,7 +150,7 @@ public class Drivetrain extends SubsystemBase {
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftPrimary.setVoltage(leftVolts);
-    rightPrimary.setVoltage(-rightVolts);
+    rightPrimary.setVoltage(rightVolts); //dont negative since motor already inverted
     m_drive.feed();
   }
 
