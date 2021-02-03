@@ -115,7 +115,6 @@ public class RobotContainer {
   private final ConventionalArcadeDrive ConventionalArcadeDrive_Inst = new ConventionalArcadeDrive(ConventionalDriveTrain_Inst, ControllerDrive);
   //auton
   //private final SequentialCommandGroup sequentialTrajectory = new SequentialCommandGroup(traWjectory1.Runner());
-  private final ParallelCommandGroup DaytonParallel = new ParallelCommandGroup(TurretFocusPIDAuton_Inst);
   //private final SequentialCommandGroup DaytonAutonomous = new SequentialCommandGroup(DaytonParallel);
   private final RunHopperUntilBallIsIn RunHopperUntilBallIsIn_Inst = new RunHopperUntilBallIsIn(Hopper_Inst);
   private final AllocateSpaceInHopperForNextCell  AllocateSpaceInHopperForNextCell_Inst = new AllocateSpaceInHopperForNextCell(Hopper_Inst);
@@ -128,6 +127,8 @@ public class RobotContainer {
   private final MoveAtSpeedForSensorPosition BackUpRobotFromPowerPort = new MoveAtSpeedForSensorPosition(ConventionalDriveTrain_Inst, -0.5, 50000);
   private final UnloadFullHopperIntoShooter unloadFullHopperIntoShooter_Inst = new UnloadFullHopperIntoShooter(Hopper_Inst);
   private final SpinUpMotorsToLowShoot spinUpMotorsToLowShoot_Inst = new SpinUpMotorsToLowShoot(Turret_Inst);
+  private final ParallelCommandGroup DaytonParallel = new ParallelCommandGroup(spinUpMotorsToLowShoot_Inst);
+
   //teleop
 
   //ugly rake solution:  
@@ -170,7 +171,7 @@ public class RobotContainer {
 
     //ControllerShoot.AButton.whenPressed(() -> TurretFocusPID_inst.stopCommand());
     ControllerShoot.BButton.whenPressed(TurretGroup);
-    ContinuousTeleop.addCommands(new VictorControlJoystickAxis(BallHopperVictor, ControllerShoot.LeftJoystick));
+    //ContinuousTeleop.addCommands(new VictorControlJoystickAxis(BallHopperVictor, ControllerShoot.LeftJoystick));
   }
 
   public Command getAutonomousCommand() {
