@@ -45,11 +45,13 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.Driving.*;
 import frc.robot.commands.Driving.ConventionalDrive.AutonomousMove;
 import frc.robot.commands.Driving.ConventionalDrive.ConventionalArcadeDrive;
+import frc.robot.commands.Driving.ConventionalDrive.MoveAtSpeedForSensorPosition;
 import frc.robot.commands.HopperDriver.AllocateSpaceInHopperForNextCell;
 import frc.robot.commands.HopperDriver.HaltUntilBallDetected;
 import frc.robot.commands.HopperDriver.HopperAutonomous;
 import frc.robot.commands.HopperDriver.RunHopperUntilBallIsIn;
 import frc.robot.commands.HopperDriver.TakeInFourthPowerCell;
+import frc.robot.commands.HopperDriver.UnloadFullHopperIntoShooter;
 import frc.robot.commands.HopperDriver.VictorControlJoystickAxis;
 import frc.robot.commands.IntakeRake.IntakeRakeAxisDependentSpeed;
 import frc.robot.commands.Trajectory.*;
@@ -123,7 +125,8 @@ public class RobotContainer {
   private final HaltUntilBallDetected haltUntilBallDetected = new HaltUntilBallDetected(Hopper_Inst);
   private final SequentialCommandGroup HopperBallIntakeSequence = new SequentialCommandGroup(haltUntilBallDetected,HopperDependentIntake);
   private final IntakeRakeAxisDependentSpeed IntakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger, ControllerDrive.RightTrigger);
-  
+  private final MoveAtSpeedForSensorPosition BackUpRobotFromPowerPort = new MoveAtSpeedForSensorPosition(ConventionalDriveTrain_Inst, -0.5, 50000);
+  private final UnloadFullHopperIntoShooter unloadFullHopperIntoShooter_Inst = new UnloadFullHopperIntoShooter(Hopper_Inst);
   //teleop
 
   //ugly rake solution:  
@@ -157,7 +160,7 @@ public class RobotContainer {
     ControllerDrive.RightTriggerAsButton.whileHeld(HopperBallIntakeSequence);
     ControllerDrive.RightTriggerAsButton.whenReleased(IntakeRake_Inst::disableRake);
     //TODO: make it so that pressing twice doesn't run command twice and ruin everything :(
-    ControllerDrive.BButton.whenPressed(new SequentialCommandGroup(new InstantCommand(Turret_Inst::spinUpMotorsToHighShootSpeeds,Turret_Inst)));
+    ControllerDrive.BButton.whenPressed(new SequentialCommandGroup(new InstantCommand(Turret_Inst::spinUpMotorsToHighShootSpeeds,Turret_Inst),BackUpRobotFromPowerPort,unloadFullHopperIntoShooter_Inst,new InstantCommand(Turret_Inst::stopMotors,Turret_Inst),ConventionalArcadeDrive_Inst));
     ControllerDrive.LeftTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));

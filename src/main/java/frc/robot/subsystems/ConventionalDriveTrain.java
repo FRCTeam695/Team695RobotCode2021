@@ -20,11 +20,12 @@ public class ConventionalDriveTrain extends SubsystemBase {
   public ConventionalDriveTrain() {
     RightFront = new TalonFX(Constants.DriveConstants.RIGHT_MOTOR1_ID);
     RightBack  = new TalonFX(Constants.DriveConstants.RIGHT_MOTOR_2_ID);
-
+    RightFront.setInverted(true);
+    RightBack.setInverted(true);
+    
     LeftFront  = new TalonFX(Constants.DriveConstants.LEFT_MOTOR1_ID);
     LeftBack   = new TalonFX(Constants.DriveConstants.LEFT_MOTOR2_ID);
-    LeftFront.setInverted(true);
-    LeftBack.setInverted(true);
+
   }
 
   public void zeroMotorSensorPositions(){
