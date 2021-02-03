@@ -127,6 +127,7 @@ public class RobotContainer {
   private final IntakeRakeAxisDependentSpeed IntakeRakeAxisDependentSpeed_Inst = new IntakeRakeAxisDependentSpeed(IntakeRake_Inst, ControllerDrive.LeftTrigger, ControllerDrive.RightTrigger);
   private final MoveAtSpeedForSensorPosition BackUpRobotFromPowerPort = new MoveAtSpeedForSensorPosition(ConventionalDriveTrain_Inst, -0.5, 50000);
   private final UnloadFullHopperIntoShooter unloadFullHopperIntoShooter_Inst = new UnloadFullHopperIntoShooter(Hopper_Inst);
+  private final SpinUpMotorsToLowShoot spinUpMotorsToLowShoot_Inst = new SpinUpMotorsToLowShoot(Turret_Inst);
   //teleop
 
   //ugly rake solution:  
@@ -164,7 +165,7 @@ public class RobotContainer {
     ControllerDrive.LeftTriggerAsButton.whenPressed(new SequentialCommandGroup(new InstantCommand(IntakeRake_Inst::enableRake, IntakeRake_Inst),IntakeRakeAxisDependentSpeed_Inst));
     ControllerDrive.RightBumper.whenPressed(new InstantCommand(IntakeRake_Inst::setDirectionCounterClockwise,IntakeRake_Inst));
     ControllerDrive.RightBumper.whenReleased(new InstantCommand(IntakeRake_Inst::setDirectionClockwise,IntakeRake_Inst));
-
+    ControllerDrive.XButton.whenPressed(new SequentialCommandGroup(spinUpMotorsToLowShoot_Inst,unloadFullHopperIntoShooter_Inst,new InstantCommand(Turret_Inst::stopMotors,Turret_Inst)));
     ContinuousTeleop.addCommands(ConventionalArcadeDrive_Inst);
 
     //ControllerShoot.AButton.whenPressed(() -> TurretFocusPID_inst.stopCommand());
