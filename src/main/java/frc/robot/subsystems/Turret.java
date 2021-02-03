@@ -100,8 +100,16 @@ public class Turret extends SubsystemBase {
 
   }
 
+  public boolean motorsAtSetpoint() {
+    return Math.abs(this.getTopError()) < 500 && Math.abs(this.getBottomError()) < 500;
+  }
+
   public void spinUpMotorsToHighShootSpeeds(){
-    setShooterWheelPowers(0.9, 0.4);
+    setShooterWheelPowers(-0.9, 0.4);
+  }
+
+  public void spinUpMotorsToLowShootSpeeds(){
+    setShooterWheelPowers(-0.16, 0.13);
   }
 
   public void stopMotors(){
