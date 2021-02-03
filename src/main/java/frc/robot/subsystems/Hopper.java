@@ -32,6 +32,10 @@ public class Hopper extends SubsystemBase {
     hopperCount++;
   }
 
+  public void zeroHopperCount(){
+    hopperCount = 0;
+  }
+
   public int getHopperCount() {
     return hopperCount;
   }
